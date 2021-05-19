@@ -21,6 +21,11 @@ module Opus
       @output[0, size].dup # we need to return copied one
     end
 
+    def encode(pcm_bytes : Bytes, frame_size)
+      pcm = Slice(Int16).new(pcm_bytes.to_unsafe.as(Int16*), pcm_bytes.bytesize // 2) # assume that endian matches system endian
+      encode(pcm, frame_size)
+    end
+
     def encode(pcm : Slice(Float), frame_size)
       size = LibOpus.opus_encode_float(@encoder, pcm, frame_size, @output, @output.bytesize)
       raise Error.new(size) if size < 0

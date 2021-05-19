@@ -25,6 +25,15 @@ module Opus
       @output_int.not_nil![0, size * @channels].dup # we need to return copied one
     end
 
+    def decode_bytes(packet : Packet)
+      decode_bytes packet.data
+    end
+
+    def decode_bytes(payload : Bytes)
+      pcm = decode(payload)
+      Bytes.new(pcm.to_unsafe.as(UInt8*), pcm.bytesize) # assume that target endian is system endian
+    end
+
     def decode_float(packet : Packet)
       decode_float packet.data
     end
